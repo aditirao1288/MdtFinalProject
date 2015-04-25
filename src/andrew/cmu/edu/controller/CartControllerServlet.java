@@ -7,53 +7,82 @@ import andrew.cmu.edu.model.Cart;
 
 
 public class CartControllerServlet extends HttpServlet {
-	private static final String MOBILE = "Mobile";
-	private static final String CART = "Cart";
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+        CentralController cc = CentralController.getInstance();
 
-		String search = req.getParameter("client");
-		if (MOBILE.equalsIgnoreCase(search)) {
-			// return list of items in cart to android
-			Cart c = getCartFromSession(req);
-			String cartXml = c.toXml();
-			resp.setContentType("text/xml");
-			resp.getWriter().write(cartXml);
+        String method = req.getParameter("method");
+        String sessionID = null;
+        String userID = null;
+        String itemID = null;
 
-		} else if (CART.equalsIgnoreCase(search)) {
-			//get color status
-			//return list of items
-		}
+        switch (method) {
+            case "mobGetStatus":
+                userID = req.getParameter("userID");
+                sessionID = cc.mobGetStatus(userID);
+                resp.setContentType("text/plain");
+                resp.getWriter().write(sessionID);
+                break;
 
-		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, world");
-	}
+            case "mobGetCart":
+                sessionID = req.getParameter("sessionID");
+                String xmlString = cc.mobGetCart(sessionID);
+                resp.setContentType("application/xml");
+                resp.getWriter().write(xmlString);
+                break;
 
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		String search = req.getParameter("client");
-		if (MOBILE.equalsIgnoreCase(search)) {
-			//success payment - success message
-			//
-			
-		} else if (CART.equalsIgnoreCase(search)) {
-			//color codes
-		}
+            case "mobCheckout":
+                sessionID = req.getParameter("sessionID");
+                String totPrice = cc.mobCheckout(sessionID);
+                resp.setContentType("text/plain");
+                resp.getWriter().write(totPrice);
+                break;
 
-		resp.setContentType("text/plain");
-		resp.getWriter().println("Hello, world");
-	}
+            case "mobSetPaymentSuccess":
+                String success = req.getParameter("sessionID");
+                cc.mobSetPaymentSuccess(success);
+                break;
 
-	private Cart getCartFromSession(HttpServletRequest req) {
+            //Cart cases  
+            case "cartAddUser":
+                userID = req.getParameter("userID");
+                String cartID = req.getParameter("cartID");
+                cc.cartAddUser(userID, cartID);
+                break;
 
-		HttpSession session = req.getSession(true);
-		Cart cart = (Cart) session.getAttribute("cart");
+            case "cartUpdate":
+                itemID = req.getParameter("itemID");
+                String weight = req.getParameter("weight");
+                sessionID = req.getParameter("sessionID");
+                cc.cartUpdate(itemID, weight, sessionID);
+                break;
 
-		if (cart == null) {
-			cart = new Cart();
-			session.setAttribute("cart", cart);
-		}
+            case "cartDeleteItem":
+                itemID = req.getParameter("itemID");
+                sessionID = req.getParameter("sessionID");
+                cc.cartDeleteItem(itemID, sessionID);
+                break;
 
-		return cart;
-	}
+            case "cartGetColorStatus":
+                sessionID = req.getParameter("sessionID");
+                String color = cc.cartGetColorStatus(sessionID);
+                resp.setContentType("text/plain");
+                resp.getWriter().write(color);
+                break;
+
+            case "cartGetCart":
+                sessionID = req.getParameter("sessionID");
+                String cartXML = cc.cartGetCart(sessionID);
+                resp.setContentType("application/xml");
+                resp.getWriter().write(cartXML);
+                break;
+
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    }
 }

@@ -4,6 +4,7 @@ package andrew.cmu.edu.model;
 import java.math.BigDecimal;
 
 public class Item {
+    
   private String code;
   private String name;
   private String description;
@@ -45,6 +46,7 @@ public Item(String code,String name,String description,double price,double weigh
   public String getFormattedPrice() {
     return "$"+new BigDecimal(price).movePointLeft(2);
   }
+
 
   public boolean equals(Object o) {
     if (this == o) return true;
