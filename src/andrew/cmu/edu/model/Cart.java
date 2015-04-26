@@ -55,25 +55,21 @@ public class Cart {
 
     public void removeItems(String itemCode) {
         Catalog catalog = new Catalog();
-
         if (catalog.containsItem(itemCode)) {
             Item item = catalog.getItem(itemCode);
-
             int newQuantity = 1;
             if (contents.containsKey(item)) {
                 Integer currentQuantity = contents.get(item);
-                newQuantity -= currentQuantity.intValue();
-            }
-            if (newQuantity == 0) {
-                contents.remove(new Catalog().getItem(itemCode));
-            } else {
-                contents.remove(new Catalog().getItem(itemCode));
-                contents.put(item, new Integer(newQuantity));
+                newQuantity = currentQuantity.intValue() - 1;
+                if (newQuantity == 0) {
+                    contents.remove(new Catalog().getItem(itemCode));
+                } else {
+                    contents.remove(new Catalog().getItem(itemCode));
+                    contents.put(item, new Integer(newQuantity));
+                }
             }
         }
-
     }
-
     /**
      * @return XML representation of cart contents
      */
