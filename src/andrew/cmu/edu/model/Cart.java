@@ -79,7 +79,7 @@ public class Cart {
      */
     public String toXml() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<?xml version=\"1.0\"?>\n");
+        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xml.append("<cart generated=\"" + System.currentTimeMillis() + "\" total=\"" + getCartTotal() + "\">\n");
 
         for (Iterator<Item> I = contents.keySet().iterator(); I.hasNext();) {
