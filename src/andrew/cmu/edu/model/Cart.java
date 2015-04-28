@@ -1,5 +1,6 @@
 package andrew.cmu.edu.model;
 
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -13,7 +14,7 @@ public class Cart {
     CartColorState colorState = CartColorState.GREEN;
     CartState cartState = CartState.READY;
 
-    private HashMap<Item,Integer> contents;
+    private HashMap<Item, Integer> contents;
 
     public HashMap<Item, Integer> getContents() {
         return contents;
@@ -37,30 +38,33 @@ public class Cart {
      * @param itemName The name of the item to add to the cart
      */
     public void addItem(String itemCode) {
-        if(colorState == CartColorState.GREEN) {
+        if (colorState == CartColorState.GREEN) {
             Catalog catalog = new Catalog();
 
-        if (catalog.containsItem(itemCode)) {
-            Item item = catalog.getItem(itemCode);
+            if (catalog.containsItem(itemCode)) {
+                Item item = catalog.getItem(itemCode);
 
-            int newQuantity = 1;
-            if (contents.containsKey(item)) {
-                Integer currentQuantity = contents.get(item);
-                newQuantity += currentQuantity.intValue();
+                int newQuantity = 1;
+                if (contents.containsKey(item)) {
+                    Integer currentQuantity = contents.get(item);
+                    newQuantity += currentQuantity.intValue();
+                }
+                contents.put(item, new Integer(newQuantity));
             }
-            contents.put(item, new Integer(newQuantity));
-        }
         }
     }
 
     public void removeItems(String itemCode) {
         Catalog catalog = new Catalog();
+
         if (catalog.containsItem(itemCode)) {
             Item item = catalog.getItem(itemCode);
+
             int newQuantity = 1;
             if (contents.containsKey(item)) {
                 Integer currentQuantity = contents.get(item);
                 newQuantity = currentQuantity.intValue() - 1;
+
                 if (newQuantity == 0) {
                     contents.remove(new Catalog().getItem(itemCode));
                 } else {
@@ -70,19 +74,20 @@ public class Cart {
             }
         }
     }
+
     /**
      * @return XML representation of cart contents
      */
     public String toXml() {
         StringBuilder xml = new StringBuilder();
-        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        xml.append("<?xml version=\"1.0\"?>\n");
         xml.append("<cart generated=\"" + System.currentTimeMillis() + "\" total=\"" + getCartTotal() + "\">\n");
 
         for (Iterator<Item> I = contents.keySet().iterator(); I.hasNext();) {
             Item item = I.next();
             int itemQuantity = contents.get(item).intValue();
             double totalPrice = item.getPrice() * itemQuantity;
-            
+
             xml.append("<item code=\"" + item.getCode() + "\">\n");
             xml.append("<name>");
             xml.append(item.getName());
@@ -108,13 +113,15 @@ public class Cart {
 
             total += (item.getPrice() * itemQuantity);
         }
+        double totalr = Math.floor(total * 100) / 100;
 
-        return "$" + new BigDecimal(total).movePointLeft(2);
+        return "$" + totalr;
     }
 
     public String checkout() {
-        if(colorState == CartColorState.GREEN) {
+        if (colorState == CartColorState.GREEN) {
             cartState = CartState.PAYMENT_FREEZE;
+            colorState = CartColorState.YELLOW;
             return getCartTotal();
         } else {
             return "ERROR";
@@ -122,21 +129,21 @@ public class Cart {
     }
 
     public void setSuccessPayment() {
-        if(cartState == CartState.PAYMENT_FREEZE) {
+        if (cartState == CartState.PAYMENT_FREEZE) {
             colorState = CartColorState.BLUE;
             cartState = CartState.PAYMENT_SUCCESS;
         }
     }
 
-   public void updateCart(String itemID, String weight) {
-        if(!itemID.equals("")) {
+  public void updateCart(String itemID, String weight) {
+        if (!itemID.equals("")) {
             addItem(itemID);
             computeAndSetWeight();
         }
-        if(!weight.equals("")) {
+        if (!weight.equals("")) {
             actualCartWeight = Double.valueOf(weight);
         }
-        
+
         checkAndSetState();
     }
 
@@ -145,7 +152,7 @@ public class Cart {
     }
 
     private void checkAndSetState() {
-        if(theoreticalCartWeight != actualCartWeight) {
+        if (theoreticalCartWeight != actualCartWeight) {
             cartState = CartState.WEIGHT_ERROR;
             colorState = CartColorState.RED;
         } else {
@@ -162,7 +169,7 @@ public class Cart {
 
     public enum CartColorState {
 
-        RED, GREEN, BLUE
+        RED, GREEN, BLUE, YELLOW
     }
 
     public enum CartState {

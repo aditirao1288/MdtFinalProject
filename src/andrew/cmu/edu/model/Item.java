@@ -1,7 +1,8 @@
-
 package andrew.cmu.edu.model;
 
+
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Item {
     
@@ -47,31 +48,20 @@ public Item(String code,String name,String description,double price,double weigh
     return "$"+new BigDecimal(price).movePointLeft(2);
   }
 
-  @Override
-public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((code == null) ? 0 : code.hashCode());
-	return result;
-}
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.code);
+        return hash;
+    }
 
-@Override
-public boolean equals(Object obj) {
-	if (this == obj)
-		return true;
-	if (obj == null)
-		return false;
-	if (getClass() != obj.getClass())
-		return false;
-	Item other = (Item) obj;
-	if (code == null) {
-		if (other.code != null)
-			return false;
-	} else if (!code.equals(other.code))
-		return false;
-	return true;
-}
-  
-  
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (this == null) return false;
+    if (!(o instanceof Item)) return false;
+    return ((Item)o).getCode().equals(this.code);
+  }
 }
 
