@@ -114,7 +114,7 @@ public class CentralController {
 
     public String cartGetStatus(String cartID) {
         if (activeCarts.containsKey(cartID)) {
-            return users.get(cartID);
+            return activeCarts.get(cartID);
         } else {
             return "-1";
         }
