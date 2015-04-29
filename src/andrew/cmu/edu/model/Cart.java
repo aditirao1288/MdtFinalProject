@@ -135,7 +135,7 @@ public class Cart {
         }
     }
 
-  public void updateCart(String itemID, String weight) {
+    public void updateCart(String itemID, String weight) {
         if (!itemID.equals("")) {
             addItem(itemID);
             computeAndSetWeight();
@@ -161,7 +161,7 @@ public class Cart {
         }
     }
 
-    public void deleteItemFromCart(String itemID) {
+   public void deleteItemFromCart(String itemID) {
         removeItems(itemID);
         computeAndSetWeight();
         checkAndSetState();

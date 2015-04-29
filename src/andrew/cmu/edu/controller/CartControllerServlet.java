@@ -1,10 +1,22 @@
 package andrew.cmu.edu.controller;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ *
+ * @author Shrek
+ */
 import java.io.IOException;
 
 import javax.servlet.http.*;
-
-import andrew.cmu.edu.model.Cart;
-
 
 public class CartControllerServlet extends HttpServlet {
 
@@ -17,6 +29,7 @@ public class CartControllerServlet extends HttpServlet {
         String sessionID = null;
         String userID = null;
         String itemID = null;
+        String cartID = null;
 
         switch (method) {
             case "mobGetStatus":
@@ -48,7 +61,7 @@ public class CartControllerServlet extends HttpServlet {
             //Cart cases  
             case "cartAddUser":
                 userID = req.getParameter("userID");
-                String cartID = req.getParameter("cartID");
+                cartID = req.getParameter("cartID");
                 cc.cartAddUser(userID, cartID);
                 break;
 
@@ -78,7 +91,24 @@ public class CartControllerServlet extends HttpServlet {
                 resp.setContentType("application/xml");
                 resp.getWriter().write(cartXML);
                 break;
-
+                
+            case "cartResetCart":
+                sessionID = req.getParameter("sessionID");
+                String response = cc.resetSession(sessionID);
+                resp.setContentType("text/plain");
+                resp.getWriter().write(response);
+                break;
+                
+                
+            case "cartGetStatus":
+                cartID = req.getParameter("cartID");
+                sessionID = cc.cartGetStatus(cartID);
+                resp.setContentType("text/plain");
+                resp.getWriter().write(sessionID);
+                break;
+                
+            default:               
+                break;
         }
     }
 

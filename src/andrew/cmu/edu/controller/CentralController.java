@@ -8,6 +8,7 @@ import andrew.cmu.edu.model.Cart;
 public class CentralController {
 
     HashMap<String, String> users = new HashMap<>();
+    HashMap<String, String> activeCarts = new HashMap<>();
     HashMap<String, Cart> sessions = new HashMap<>();
 
     private static CentralController instance = null;
@@ -60,7 +61,7 @@ public class CentralController {
     public void mobSetPaymentSuccess(String session) {
         if (sessions.containsKey(session)) {
             sessions.get(session).setSuccessPayment();
-        } 
+        }
     }
 
     /**
@@ -74,7 +75,11 @@ public class CentralController {
             if (users.containsKey(userID)) {
                 users.remove(userID);
             }
+            if (activeCarts.containsKey(cartId)) {
+                activeCarts.remove(cartId);
+            }
             users.put(userID, session);
+            activeCarts.put(cartId, session);
             sessions.put(session, new Cart());
         }
     }
@@ -97,13 +102,32 @@ public class CentralController {
         if (sessions.containsKey(sessionID)) {
             return sessions.get(sessionID).getColorStatus();
         } else {
-            return "RED";
+            return "BLUE";
         }
     }
-    
+
     public void cartDeleteItem(String itemID, String sessionID) {
         if (sessions.containsKey(sessionID)) {
             sessions.get(sessionID).deleteItemFromCart(itemID);
         }
+    }
+
+    public String cartGetStatus(String cartID) {
+        if (activeCarts.containsKey(cartID)) {
+            return users.get(cartID);
+        } else {
+            return "-1";
+        }
+    }
+
+    String resetSession(String sessionID) {
+        if(sessions.containsKey(sessionID)) {
+            String userID = sessionID.split("_")[0];
+            String cartID = sessionID.split("_")[1];
+            users.remove(userID);
+            activeCarts.remove(cartID);
+            sessions.remove(sessionID);
+        }
+        return "1";
     }
 }
